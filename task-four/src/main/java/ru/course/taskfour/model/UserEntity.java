@@ -13,7 +13,6 @@ public class UserEntity implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(unique = true)
     private String userName;
     private String fullName;
     @OneToMany (mappedBy="id", fetch=FetchType.EAGER)

@@ -22,4 +22,10 @@ public class FileService implements FileServiceable {
 
     @Override
     public void saveFileContent(String folderName) {}
+
+    @Override
+    public void checkUserEntity() {}
+
+    @Override
+    public void checkLoginEntity() {}
 }

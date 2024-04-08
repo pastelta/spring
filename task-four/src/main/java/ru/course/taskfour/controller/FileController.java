@@ -1,11 +1,8 @@
 package ru.course.taskfour.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.course.taskfour.model.FileContent;
-import ru.course.taskfour.model.Folder;
 import ru.course.taskfour.service.FileServiceable;
 
 import java.util.List;
@@ -23,5 +20,7 @@ public class FileController {
     @PostMapping("save")
     public void saveFileContent(@RequestBody String folderPath){
         SERVICE.saveFileContent(folderPath);
-    };
+        SERVICE.checkUserEntity();
+        SERVICE.checkLoginEntity();
+    }
 }

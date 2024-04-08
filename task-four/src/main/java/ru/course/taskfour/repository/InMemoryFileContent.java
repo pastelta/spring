@@ -40,7 +40,7 @@ public class InMemoryFileContent {
         }
         List<String> rows = Arrays.asList(content.split(";"));
         for (int i = 0; i < rows.size(); i++) {
-            List<String> items = Arrays.asList(rows.get(i).split(" "));
+            List<String> items = Arrays.asList(rows.get(i).split(","));
             FileContent fc = new FileContent();
             fc.setUserName(items.get(0));
             fc.setLastName(items.get(1));
