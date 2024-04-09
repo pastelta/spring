@@ -3,6 +3,7 @@ package ru.course.taskfour.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import ru.course.taskfour.annotations.LogTransformation;
 import ru.course.taskfour.model.FileContent;
 import ru.course.taskfour.model.LoginEntity;
 import ru.course.taskfour.model.UserEntity;
@@ -35,12 +36,15 @@ public class EntityService implements FileServiceable {
     }
 
     @Override
+    @LogTransformation
     public void saveFileContent(String folderName) {
         List<FileContent> fileContentList = IN_MEMORY_REPOSITORY.uploadByFolderName(folderName);
+        fileContentList.removeIf(i->i.getAccessDate().isEmpty());
         fileContentList = REPOSITORY.saveAll(fileContentList);
     }
 
     @Override
+    @LogTransformation
     public void checkUserEntity() {
         List<FileContent> fileContentList = REPOSITORY.findAll();
         HashSet<UserEntity> userEntityList = new HashSet<>();
@@ -62,6 +66,7 @@ public class EntityService implements FileServiceable {
     }
 
     @Override
+    @LogTransformation
     public void checkLoginEntity() {
         List<LoginEntity> loginEntityList = new ArrayList<>();
         List<UserEntity> userEntityList = USER_ENTITY_REPOSITORY.findAll();
@@ -70,8 +75,6 @@ public class EntityService implements FileServiceable {
         for (FileContent f :
                 fileContentList) {
             LoginEntity loginEntity = new LoginEntity();
-
-            loginEntity.setAccessDate(Timestamp.valueOf(f.getAccessDate()));
 
             if (f.getApplication().equals("web") || f.getApplication().equals("mobile")) {
                 loginEntity.setApplication(f.getApplication());
@@ -85,6 +88,7 @@ public class EntityService implements FileServiceable {
                     .orElse(-1);
 
             loginEntity.setUser(userEntityList.get(index));
+            loginEntity.setAccessDate(Timestamp.valueOf(f.getAccessDate()));
 
             loginEntityList.add(loginEntity);
         }
