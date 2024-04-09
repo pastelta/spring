@@ -7,11 +7,12 @@ import ru.course.taskfour.annotations.LogTransformation;
 import ru.course.taskfour.model.FileContent;
 import ru.course.taskfour.model.LoginEntity;
 import ru.course.taskfour.model.UserEntity;
-import ru.course.taskfour.repository.FIleContentRepositoryable;
+import ru.course.taskfour.repository.FileContentRepositoryable;
 import ru.course.taskfour.repository.InMemoryFileContent;
 import ru.course.taskfour.repository.LoginEntityRepositoryable;
 import ru.course.taskfour.repository.UserEntityRepositoryable;
 import ru.course.taskfour.service.FileServiceable;
+import lombok.extern.log4j.Log4j2;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -20,12 +21,13 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
+@Log4j2
 @AllArgsConstructor
 @Primary
 public class EntityService implements FileServiceable {
 
     private final InMemoryFileContent IN_MEMORY_REPOSITORY;
-    private final FIleContentRepositoryable REPOSITORY;
+    private final FileContentRepositoryable REPOSITORY;
 
     private final UserEntityRepositoryable USER_ENTITY_REPOSITORY;
     private final LoginEntityRepositoryable LOGIN_ENTITY_REPOSITORY;
@@ -41,6 +43,7 @@ public class EntityService implements FileServiceable {
         List<FileContent> fileContentList = IN_MEMORY_REPOSITORY.uploadByFolderName(folderName);
         fileContentList.removeIf(i->i.getAccessDate().isEmpty());
         fileContentList = REPOSITORY.saveAll(fileContentList);
+        log.info("Количество записей из файла к добавлению в базу: " + REPOSITORY.count());
     }
 
     @Override
@@ -63,6 +66,7 @@ public class EntityService implements FileServiceable {
         }
 
         USER_ENTITY_REPOSITORY.saveAll(userEntityList);
+        log.info("Количество записей успешно добавленных в таблицу users: " + USER_ENTITY_REPOSITORY.count());
     }
 
     @Override
@@ -94,5 +98,6 @@ public class EntityService implements FileServiceable {
         }
 
         LOGIN_ENTITY_REPOSITORY.saveAll(loginEntityList);
+        log.info("Количество записей успешно добавленных в таблицу logins: " + LOGIN_ENTITY_REPOSITORY.count());
     }
 }
