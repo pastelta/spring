@@ -10,12 +10,21 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import ru.course.taskfour.repository.FileContentRepositoryable;
+import ru.course.taskfour.repository.LoginEntityRepositoryable;
+import ru.course.taskfour.repository.UserEntityRepositoryable;
 
 import static io.restassured.RestAssured.given;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TaskFourApplicationTests {
+    @Autowired
+    private FileContentRepositoryable f;
+    @Autowired
+    private UserEntityRepositoryable u;
+    @Autowired
+    private LoginEntityRepositoryable l;
+
     @Test
     void contextLoads() {
     }
@@ -42,9 +51,6 @@ class TaskFourApplicationTests {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-    @Autowired
-    private FileContentRepositoryable f;
-
     @BeforeEach
     void setUp() {
         RestAssured.baseURI = "http://localhost:" + port;
@@ -53,6 +59,7 @@ class TaskFourApplicationTests {
 
     @Test
     void entityServiceTest() {
+
         given()
                 .contentType(ContentType.JSON)
                 .when()
@@ -62,6 +69,7 @@ class TaskFourApplicationTests {
                 .statusCode(200);
 
         Assertions.assertEquals(4, f.count());
+        Assertions.assertEquals(3, u.count()); //users
+        Assertions.assertEquals(4, l.count()); //logins
     }
-
 }
