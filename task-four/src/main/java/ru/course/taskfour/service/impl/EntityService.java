@@ -41,7 +41,7 @@ public class EntityService implements FileServiceable {
     @LogTransformation
     public void saveFileContent(String folderName) {
         List<FileContent> fileContentList = IN_MEMORY_REPOSITORY.uploadByFolderName(folderName);
-        fileContentList.removeIf(i->i.getAccessDate().isEmpty());
+        fileContentList.removeIf(i -> i.getAccessDate().isEmpty());
         fileContentList = REPOSITORY.saveAll(fileContentList);
         log.info("Количество записей из файла к добавлению в базу: " + REPOSITORY.count());
     }
@@ -50,6 +50,7 @@ public class EntityService implements FileServiceable {
     @LogTransformation
     public void checkUserEntity() {
         List<FileContent> fileContentList = REPOSITORY.findAll();
+        List<UserEntity> userEntityTempList = USER_ENTITY_REPOSITORY.findAll();
         HashSet<UserEntity> userEntityList = new HashSet<>();
 
         for (FileContent f :
@@ -60,9 +61,9 @@ public class EntityService implements FileServiceable {
             userEntity.setFullName(f.getLastName().substring(0, 1).toUpperCase() + f.getLastName().substring(1) + " " +
                     f.getFirstName().substring(0, 1).toUpperCase() + f.getFirstName().substring(1) + " " +
                     f.getMiddleName().substring(0, 1).toUpperCase() + f.getMiddleName().substring(1));
-
-            userEntityList.add(userEntity);
-
+            if (!userEntityTempList.stream().filter(u -> u.getUserName().equals(userEntity.getUserName())).findFirst().isPresent()) {
+                userEntityList.add(userEntity);
+            }
         }
 
         USER_ENTITY_REPOSITORY.saveAll(userEntityList);
@@ -75,6 +76,7 @@ public class EntityService implements FileServiceable {
         List<LoginEntity> loginEntityList = new ArrayList<>();
         List<UserEntity> userEntityList = USER_ENTITY_REPOSITORY.findAll();
         List<FileContent> fileContentList = REPOSITORY.findAll();
+        List<LoginEntity> loginEntityTempList = LOGIN_ENTITY_REPOSITORY.findAll();
 
         for (FileContent f :
                 fileContentList) {
@@ -94,7 +96,10 @@ public class EntityService implements FileServiceable {
             loginEntity.setUser(userEntityList.get(index));
             loginEntity.setAccessDate(Timestamp.valueOf(f.getAccessDate()));
 
-            loginEntityList.add(loginEntity);
+            if (!(loginEntityTempList.stream().filter(l->l.getUser().equals(loginEntity.getUser())).findFirst().isPresent()
+                    && loginEntityTempList.stream().filter(l->l.getAccessDate().equals(loginEntity.getAccessDate())).findFirst().isPresent())) {
+                loginEntityList.add(loginEntity);
+            }
         }
 
         LOGIN_ENTITY_REPOSITORY.saveAll(loginEntityList);
