@@ -43,7 +43,6 @@ public class EntityService implements FileServiceable {
         List<FileContent> fileContentList = IN_MEMORY_REPOSITORY.uploadByFolderName(folderName);
         fileContentList.removeIf(i -> i.getAccessDate().isEmpty());
         fileContentList = REPOSITORY.saveAll(fileContentList);
-        log.info("Количество записей из файла к добавлению в базу: " + REPOSITORY.count());
     }
 
     @Override
@@ -67,7 +66,6 @@ public class EntityService implements FileServiceable {
         }
 
         USER_ENTITY_REPOSITORY.saveAll(userEntityList);
-        log.info("Количество записей успешно добавленных в таблицу users: " + USER_ENTITY_REPOSITORY.count());
     }
 
     @Override
@@ -103,6 +101,5 @@ public class EntityService implements FileServiceable {
         }
 
         LOGIN_ENTITY_REPOSITORY.saveAll(loginEntityList);
-        log.info("Количество записей успешно добавленных в таблицу logins: " + LOGIN_ENTITY_REPOSITORY.count());
     }
 }
