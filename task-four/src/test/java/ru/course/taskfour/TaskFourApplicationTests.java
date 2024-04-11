@@ -13,6 +13,8 @@ import ru.course.taskfour.repository.FileContentRepositoryable;
 import ru.course.taskfour.repository.LoginEntityRepositoryable;
 import ru.course.taskfour.repository.UserEntityRepositoryable;
 
+import java.io.File;
+
 import static io.restassured.RestAssured.given;
 
 
@@ -60,10 +62,14 @@ class TaskFourApplicationTests {
     @Test
     void entityServiceTest() {
 
+        String path = "src/test/resources/files";
+        File file = new File(path);
+        String folderPath = file.getAbsolutePath().replace("\\","//");
+
         given()
                 .contentType(ContentType.JSON)
                 .when()
-                .body("{\"folderName\":\"C://Users//Татьяна//SpringDemo//task-four//src//main//resources//files\"}")
+                .body("{\"folderName\":\"" + folderPath + "\"}")
                 .post("/api/v1/save")
                 .then()
                 .statusCode(200);
